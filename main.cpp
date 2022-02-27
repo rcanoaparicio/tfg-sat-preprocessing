@@ -5,7 +5,7 @@
 #include <algorithm>
 #include <unordered_set>
 #include <map>
-
+#include <chrono>
 
 using namespace std;
 
@@ -45,25 +45,7 @@ int getIndex(int v) {
 
 typedef struct Constraint {
         int k;
-        std::vector<int> vars;
-
-        int getQ() const {
-                return vars.size() - k;
-        }
-
-        bool operator<(const Constraint& a) const
-        {
-                int q = getQ();
-                int aq = a.getQ();
-                return q != aq ? (q < aq) : (k < a.k);
-        }
-
-        bool operator==(const Constraint& a) const
-        {
-                if (a.k != k || a.vars.size() != vars.size()) return false;
-                for (int i = 0; i < vars.size(); ++i) if (vars[i] != a.vars[i]) return false;
-                return true;
-        }
+        vector<int> vars;
 } Constraint;
 
 
@@ -112,15 +94,8 @@ unordered_set<int> set_vars;
 vector<Constraint> constraints;
 
 vector<Constraint> constraints1;
-vector<Constraint> constraints2;
 
 unordered_set<int> set_vars1;
-unordered_set<int> set_vars2;
-
-int q1i = 0;
-int q1f = 0;
-int q2i = 0;
-int q2f = 0;
 
 
 
@@ -128,7 +103,7 @@ int q2f = 0;
 
 
 void readClauses() {
-        std::string s;
+        string s;
         while (cin >> s && s == "c") getline(cin, s);
 
         cin >> s >> numVars >> numClauses;
@@ -151,26 +126,20 @@ void readClauses() {
                 } while (next != 0);
         }
 
-        sort(constraints.begin(), constraints.end());
-
-        for (int i = 0; i < constraints.size() && q1f == 0; ++i) {
-                if (constraints[i].getQ() == 1) constraints1.push_back(constraints[i]);
-                else if (constraints[i].getQ() == 2) constraints2.push_back(constraints[i]);
-                else if (constraints[i].getQ() > 2) break;
+        for (int i = 0; i < constraints.size(); ++i) {
+                if (constraints[i].vars.size() == 2) constraints1.push_back(constraints[i]);
         }
 
-        for (int i = 0; i < q1i; ++i)
+        for (int i = 0; i < constraints1.size(); ++i)
                 for (const auto v : constraints1[i].vars) set_vars1.insert(v);
 
-        for (int i = 0; i < constraints2.size(); ++i)
-                for (const auto v : constraints2[i].vars) set_vars2.insert(v);
 
 }
 
 
 
-std::string toString(const Constraint c) {
-        std::string r = "";
+string toString(const Constraint c) {
+        string r = "";
         for (int i = 0; i < c.vars.size(); ++i) {
                 r += to_string(c.vars[i]) + " ";
                 if (i < c.vars.size() - 1) r += "+ ";
@@ -223,21 +192,28 @@ vector<int> getCandidateVariables(const Trie &trie, const vector<int> &vars, int
 void learnConstraintsQ1() {
 
         vector<Constraint> consts = constraints1;
-        int q = 1;
+        int k = 1;
+
         while (consts.size() != 0) {
-                cout << "Q: " << q << endl;
-                /*
-                   for (auto c : consts) {
-                        cout << toString(c) << endl;
+                cout << "K: " << k << endl;
+
+                /*for (auto c : consts) {
+                        cout << toString(c) << '\n';
                    }
-                   cout << endl;
+
+                   cout << consts.size() << "\n\n";
                  */
+                chrono::steady_clock::time_point begin = chrono::steady_clock::now();
                 Trie trie;
-                for (int i = 0; i < consts.size(); ++i) insert(trie, consts[i]);
+
+
+                for (int i = 0; i < consts.size(); ++i) {
+                        insert(trie, consts[i]);
+                }
 
                 vector<Constraint> next_consts;
                 for (int i = 0; i < consts.size(); ++i) {
-                        vector<int> candidate_vars = getCandidateVariables(trie, consts[i].vars, 0, q);
+                        vector<int> candidate_vars = getCandidateVariables(trie, consts[i].vars, 0, k);
                         for (const int var : candidate_vars)  {
                                 Constraint new_const = consts[i];
                                 new_const.vars.push_back(var);
@@ -245,19 +221,21 @@ void learnConstraintsQ1() {
                                 next_consts.push_back(new_const);
                         }
                 }
+                consts.clear();
                 consts = next_consts;
-                q++;
+                k++;
+                chrono::steady_clock::time_point end = chrono::steady_clock::now();
+                cout << consts.size() << " constraints." << endl;
+                cout << "Time difference = " << chrono::duration_cast<chrono::milliseconds> (end - begin).count() << "[ms]" << endl << endl;
         }
 }
 
 
 
 
-
-
-
 int main() {
-
+        ios_base::sync_with_stdio(false);
+        cin.tie(NULL);
         cout << "Reading clauses..." << endl;
         readClauses();
 
