@@ -1,0 +1,3 @@
+[submodule "quick-cliques"]
+	path = quick-cliques
+	url = https://github.com/darrenstrash/quick-cliques.git
