@@ -6,6 +6,8 @@
 #include <unordered_set>
 #include <map>
 #include <chrono>
+#include <boost/coroutine2/coroutine.hpp>
+
 
 using namespace std;
 
@@ -82,6 +84,18 @@ void toList(const Trie &trie,  vector<Constraint> &res, const Constraint &constr
                 new_constraint.vars.push_back(cit.second.varNumber);
                 toList(cit.second.next, res, new_constraint);
         }
+}
+
+typedef boost::coroutines2::coroutine<Constraint> coro_t;
+
+void getConstraints(coro_t::push_type &yield, const Trie &trie, const Constraint &constraint) {
+        if (trie.size() == 0) yield(constraint);
+        for (auto const &cit : trie) {
+                Constraint new_constraint = constraint;
+                new_constraint.vars.push_back(cit.second.varNumber);
+                getConstraints(yield, cit.second.next, new_constraint);
+        }
+
 }
 
 void toList(const Trie &trie, vector<Constraint> &res) {
@@ -191,45 +205,44 @@ vector<int> getCandidateVariables(const Trie &trie, const vector<int> &vars, int
 
 void learnConstraintsQ1() {
 
-        vector<Constraint> consts = constraints1;
         int k = 1;
+        Trie trie;
 
-        while (consts.size() != 0) {
+        for (int i = 0; i < constraints1.size(); ++i) {
+                insert(trie, constraints1[i]);
+        }
+
+
+        while (trie.size() != 0) {
                 cout << "K: " << k << endl;
+                vector<Constraint> v;
+                toList(trie, v);
+                cout << v.size() << endl;
 
-                /*for (auto c : consts) {
-                        cout << toString(c) << '\n';
-                   }
-
-                   cout << consts.size() << "\n\n";
-                 */
                 chrono::steady_clock::time_point begin = chrono::steady_clock::now();
-                Trie trie;
 
+                Trie next_trie;
+                Constraint bc;
+                coro_t::pull_type seq{bind(getConstraints, placeholders::_1, trie, bc)};
+                for (const auto &c : seq) {
+                        vector<int> candidate_vars = getCandidateVariables(trie, c.vars, 0, k);
 
-                for (int i = 0; i < consts.size(); ++i) {
-                        insert(trie, consts[i]);
-                }
-
-                vector<Constraint> next_consts;
-                for (int i = 0; i < consts.size(); ++i) {
-                        vector<int> candidate_vars = getCandidateVariables(trie, consts[i].vars, 0, k);
                         for (const int var : candidate_vars)  {
-                                Constraint new_const = consts[i];
+                                Constraint new_const = c;
                                 new_const.vars.push_back(var);
                                 new_const.k++;
-                                next_consts.push_back(new_const);
+                                insert(next_trie, new_const);
                         }
                 }
-                consts.clear();
-                consts = next_consts;
+                trie = next_trie;
                 k++;
                 chrono::steady_clock::time_point end = chrono::steady_clock::now();
-                cout << consts.size() << " constraints." << endl;
+
+
+
                 cout << "Time difference = " << chrono::duration_cast<chrono::milliseconds> (end - begin).count() << "[ms]" << endl << endl;
         }
 }
-
 
 
 

@@ -1,0 +1,27 @@
+g++ main.cpp -O2 -o main
+g++ probing.cpp -O2 -o probing
+FILE: robertoBenchs/aes_24_4_keyfind_2-sc2013.cnf
+Reading clauses...
+Q: 1
+FILE: robertoBenchs/Bebel-toughsat_24bits_1.cnf
+Reading clauses...
+Q: 1
+Q: 2
+Q: 3
+FILE: robertoBenchs/Biere-eqbpwtrc10bpdtlf10.cnf
+Reading clauses...
+Q: 1
+Q: 2
+Q: 3
+Q: 4
+Q: 5
+Q: 6
+Q: 7
+Q: 8
+Q: 9
+Q: 10
+FILE: robertoBenchs/hid-uns-enc-6-1-0-0-0-0-3251.cnf
+Reading clauses...
+Q: 1
+Q: 2
+Q: 3

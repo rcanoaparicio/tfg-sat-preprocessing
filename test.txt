@@ -1,0 +1,25 @@
+Reading clauses...
+K: 1
+Time difference = 6[ms]
+K: 2
+Time difference = 10[ms]
+K: 3
+Time difference = 25[ms]
+K: 4
+Time difference = 43[ms]
+K: 5
+Time difference = 56[ms]
+K: 6
+Time difference = 51[ms]
+K: 7
+Time difference = 37[ms]
+K: 8
+Time difference = 19[ms]
+K: 9
+Time difference = 6[ms]
+K: 10
+Time difference = 1[ms]
+K: 11
+Time difference = 0[ms]
+K: 12
+Time difference = 0[ms]

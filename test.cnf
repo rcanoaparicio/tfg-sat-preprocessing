@@ -1,0 +1,16 @@
+c Scranfilize CNF Scrambler
+c Version 003 9a38402ab0067cde5c53964615ae940a00f23767
+c random seed '2019'
+c literal flip probability 0.01 ('-f 0.01')
+c relative variable move window 0.01 ('-v 0.01')
+c relative clause move window 0.01 ('-c 0.01')
+p cnf 5 9
+1 2 0
+1 3 0
+1 4 0
+1 5 0
+2 3 0
+2 4 0
+2 5 0
+3 4 0
+3 5 0

@@ -1,0 +1,30 @@
+cano@cano:~/FIB/TFG/2022$ time ./SAT-alumnes < robertoBenchs/leagues1.cnf
+78743
+292203
+
+real	0m0,359s
+user	0m0,343s
+sys	0m0,016s
+cano@cano:~/FIB/TFG/2022$ time ./SAT-alumnes < robertoBenchs/leagues2.cnf
+230248
+5910310
+
+real	0m8,505s
+user	0m8,310s
+sys	0m0,140s
+cano@cano:~/FIB/TFG
+
+cano@cano:~/FIB/TFG/2022$ time ./SAT-alumnes < robertoBenchs/leagues1.cnf
+78743
+292203
+
+real	0m0,222s
+user	0m0,210s
+sys	0m0,012s
+cano@cano:~/FIB/TFG/2022$ time ./SAT-alumnes < robertoBenchs/leagues2.cnf
+230248
+5910310
+
+real	0m6,404s
+user	0m6,313s
+sys	0m0,080s
